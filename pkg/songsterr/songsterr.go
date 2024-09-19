@@ -20,6 +20,11 @@ type (
 	Service struct {
 		client *http.Client
 	}
+
+	Pagination struct {
+		Limit  int
+		Offset int
+	}
 )
 
 func NewService(client *http.Client) *Service {
@@ -33,6 +38,13 @@ func GetIDFromURL(rawURL string) (int, error) {
 	elem := strings.Split(base, "-")
 	rawID := strings.TrimPrefix(elem[len(elem)-1], "s")
 	return strconv.Atoi(rawID)
+}
+
+func (p Pagination) Next() Pagination {
+	return Pagination{
+		Limit:  p.Limit,
+		Offset: p.Offset + p.Limit,
+	}
 }
 
 func (s Service) GetSongByID(songID int) (song.Song, error) {
@@ -57,15 +69,15 @@ func (s Service) GetRevisions(songID string) ([]song.Song, error) {
 	return songs, nil
 }
 
-func (s Service) SearchSongsByArtistID(artistID string, limit, offset int) ([]song.SearchSongResult, error) {
-	parsedURL, err := url.Parse(fmt.Sprintf("%s/artist/%s/songs", apiBasePath, artistID))
+func (s Service) SearchSongsByArtistID(artistID int, p Pagination) ([]song.SearchSongResult, error) {
+	parsedURL, err := url.Parse(fmt.Sprintf("%s/artist/%d/songs", apiBasePath, artistID))
 	if err != nil {
 		return nil, err
 	}
 
 	query := parsedURL.Query()
-	query.Set("size", strconv.Itoa(limit))
-	query.Set("from", strconv.Itoa(offset))
+	query.Set("size", strconv.Itoa(p.Limit))
+	query.Set("from", strconv.Itoa(p.Offset))
 	parsedURL.RawQuery = query.Encode()
 
 	var results []song.SearchSongResult

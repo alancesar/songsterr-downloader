@@ -28,7 +28,10 @@ func TestService_SearchSongsByArtistID(t *testing.T) {
 	t.Run("search some artist by id", func(t *testing.T) {
 		client := util.NewFakeHTTPClient([]byte(testdata.GetSongByArtistResponse), http.StatusOK)
 		service := NewService(client)
-		results, err := service.SearchSongsByArtistID("some-artist", 0, 10)
+		results, err := service.SearchSongsByArtistID(123, Pagination{
+			Limit:  10,
+			Offset: 0,
+		})
 		if err != nil {
 			t.Fatal(err)
 		}

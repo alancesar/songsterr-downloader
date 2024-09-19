@@ -10,15 +10,15 @@ import (
 )
 
 var (
-	url string
+	id int
 )
 
 func init() {
-	flag.StringVar(&url, "url", "", "song url")
+	flag.IntVar(&id, "id", 0, "artist id")
 	flag.Parse()
 
-	if url == "" {
-		log.Fatal("url param is required")
+	if id == 0 {
+		log.Fatal("id param is required")
 	}
 }
 
@@ -34,7 +34,7 @@ func main() {
 	d := infra.NewDownloader(defaultClient)
 
 	uc := usecase.NewSongUseCase(s, fh, d)
-	if err := uc.DownloadTabByURL(url); err != nil {
+	if err := uc.DownloadTabsByArtistID(id); err != nil {
 		log.Fatalln(err)
 	}
 }

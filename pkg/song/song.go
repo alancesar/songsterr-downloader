@@ -119,7 +119,3 @@ func (s Song) Path() string {
 	filename := fmt.Sprintf("%s%s", s.Title, ext)
 	return filepath.Join(s.Artist, filename)
 }
-
-func (s Song) Fullname() string {
-	return fmt.Sprintf("%s - %s", s.Artist, s.Title)
-}

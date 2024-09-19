@@ -44,3 +44,12 @@ func (h FileHandler) Exist(filename string) (bool, error) {
 func (h FileHandler) buildCompletePath(filename string) string {
 	return filepath.Join(h.root, filename)
 }
+
+func DefaultRootPath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+
+	return filepath.Join(homeDir, "Tabs"), nil
+}
